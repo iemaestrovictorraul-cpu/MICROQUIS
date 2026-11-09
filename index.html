@@ -18,6 +18,7 @@ h1{font-size:26px}
 .hero p{margin:2px 0 0;opacity:.92;font-size:13px}
 .sch{font-weight:700;font-size:12px;letter-spacing:.06em;margin-bottom:2px}
 .sg img{display:block}
+@media(min-width:801px){aside{position:sticky;top:8px;max-height:calc(100vh - 16px);overflow:auto;align-self:start}}
 .wrap{display:grid;grid-template-columns:230px 1fr;gap:14px;padding:14px 16px 24px;max-width:1300px;margin:auto}
 @media(max-width:800px){.wrap{grid-template-columns:1fr}}
 .card{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:12px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,.05)}
@@ -66,6 +67,7 @@ input,select{background:var(--bg);border:1px solid var(--bd);border-radius:10px;
 <aside>
 <div class="card"><h2>👨‍👩‍👧 Personajes</h2><div class="grid" id="pers"></div></div>
 <div class="card"><h2>🏠 Para construir la casa</h2><div class="grid" id="house"></div></div>
+<div class="card"><h2>🏫 En el colegio</h2><div class="grid" id="school"></div></div>
 <div class="card"><h2>🚸 Señalizaciones</h2><div class="grid" id="signs"></div></div>
 </aside>
 <main>
@@ -77,7 +79,7 @@ input,select{background:var(--bg);border:1px solid var(--bd);border-radius:10px;
 <button data-tool="wall">🧱 Pared</button>
 <button data-tool="room">⬛ Ambiente</button>
 <button data-tool="arrow">➡️ Ruta</button>
-<button data-tool="stairs">🪜 Escalera</button>
+<button data-tool="stairs">🔼 Escalera</button>
 <button data-tool="text">🔤 Texto</button>
 <select id="rt" aria-label="Tipo de ambiente" style="width:auto"></select>
 <span class="sep"></span>
@@ -115,10 +117,11 @@ const FB={apiKey:"AIzaSyBVXveOsdME3gzVwWrZ5yg0Yfv5ffZNx50",authDomain:"croquis-b
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script>
-const SG={safe:['🧍','Zona segura','#1b8a3a'],exit:['🚪','Salida','#1b8a3a'],route:['⬆️','Ruta de evacuación','#1b8a3a'],meet:['👥','Punto de reunión','#1565c0'],ext:['🧯','Extintor','#d32f2f'],aid:['⛑️','Botiquín','#1b8a3a'],danger:['⚠️','Zona de peligro','#c98f00'],stairs:['🪜','Escalera','#6d4c41'],alarm:['🚨','Alarma','#d32f2f'],elec:['⚡','Peligro eléctrico','#c98f00'],pack:['🎒','Mochila de emergencia','#1b8a3a'],lamp:['🔦','Linterna','#546e7a'],acc:['♿','Acceso accesible','#1565c0'],phone:['📞','Teléfono de emergencia','#1565c0'],stop:['⛔','Prohibido bloquear','#d32f2f'],water:['💧','Llave de agua','#0277bd']};
-const HS={bed:['🛏️','Cama','#8d6e63'],wc:['🚽','Inodoro','#26a6c4'],shower:['🚿','Ducha','#26a6c4'],sink:['🚰','Lavatorio','#26a6c4'],sofa:['🛋️','Sofá','#7e57c2'],stove:['🍳','Cocina','#ef6c00'],fridge:['🧊','Refrigeradora','#78909c'],table:['🍽️','Mesa','#8d6e63'],chair:['🪑','Silla','#8d6e63'],win:['🪟','Ventana','#4fc3f7'],door:['🚪','Puerta','#8d6e63'],tree:['🌳','Árbol','#43a047']};
+const SG={safe:['🛡️','Zona segura','#1b8a3a'],exit:['🚪','Salida','#1b8a3a'],route:['⬆️','Ruta de evacuación','#1b8a3a'],meet:['👥','Punto de reunión','#1565c0'],ext:['🧯','Extintor','#d32f2f'],aid:['⛑️','Botiquín','#1b8a3a'],danger:['⚠️','Zona de peligro','#c98f00'],stairs:['🔼','Escalera','#6d4c41'],alarm:['🚨','Alarma','#d32f2f'],elec:['⚡','Peligro eléctrico','#c98f00'],pack:['🎒','Mochila de emergencia','#1b8a3a'],lamp:['🔦','Linterna','#546e7a'],acc:['♿','Acceso accesible','#1565c0'],phone:['📞','Teléfono de emergencia','#1565c0'],stop:['⛔','Prohibido bloquear','#d32f2f'],water:['💧','Llave de agua','#0277bd'],exitem:['🏃','Salida de emergencia','#1b8a3a'],zss:['✅','Zona segura en sismo','#1b8a3a'],fire:['🔥','Peligro de incendio','#d32f2f'],hose:['🚒','Gabinete contra incendios','#d32f2f'],nosmoke:['🚭','Prohibido fumar','#d32f2f'],nopass:['🚷','Prohibido el paso','#d32f2f'],silence:['🤫','Silencio','#1565c0'],bell:['🔔','Timbre o sirena','#c98f00'],tsu:['🌊','Zona de tsunami o inundación','#1565c0'],rock:['⛰️','Zona de derrumbes','#c98f00']};
+const HS={bed:['🛏️','Cama','#8d6e63'],wc:['🚽','Inodoro','#26a6c4'],shower:['🚿','Ducha','#26a6c4'],sink:['🚰','Lavatorio','#26a6c4'],sofa:['🛋️','Sofá','#7e57c2'],stove:['🍳','Cocina','#ef6c00'],fridge:['❄️','Refrigeradora','#78909c'],table:['🍽️','Mesa','#8d6e63'],chair:['💺','Silla','#8d6e63'],win:['🖼️','Ventana','#4fc3f7'],door:['🚪','Puerta','#8d6e63'],tree:['🌳','Árbol','#43a047'],closet:['🗄️','Ropero','#8d6e63'],tv:['📺','Televisor','#546e7a'],desk:['🖥️','Escritorio','#546e7a'],wash:['🧺','Lavandería','#26a6c4'],car:['🚗','Garaje','#546e7a'],gas:['🛢️','Balón de gas','#d32f2f'],panel:['🔌','Tablero eléctrico','#c98f00'],bath:['🛁','Tina','#26a6c4'],garden:['🌷','Jardín','#43a047'],dog:['🐕','Mascota','#8d6e63']};
 const PS={nino:['👦','Niño','#f4a300'],nina:['👧','Niña','#e5518a'],joven:['🧑','Joven','#3b82c4'],padre:['👨','Padre','#6a5acd'],madre:['👩','Madre','#d2552e']};
-const K={...SG,...HS,...PS};
+const CS={admin:['🏢','Dirección','#1565c0'],lib:['📚','Biblioteca','#1565c0'],lab:['🧪','Laboratorio','#1565c0'],aip:['💻','Aula de Innovación','#1565c0'],nurse:['🏥','Tópico','#1b8a3a'],wcs:['🚻','Servicios higiénicos','#26a6c4'],kiosk:['🛒','Kiosco','#ef6c00'],court:['⚽','Cancha','#43a047'],flag:['🚩','Patio de formación','#d32f2f']};
+const K={...SG,...HS,...CS,...PS};
 const PP={nino:{h:.7,hair:'#3b2a1a',top:'#f4a300',bot:'#1e4f8a'},nina:{h:.72,hair:'#2b1b12',top:'#e5518a',bot:'#e5518a',sk:1,lg:1},joven:{h:.95,hair:'#222',top:'#3b82c4',bot:'#333f5c'},padre:{h:1,hair:'#4a3626',top:'#6a5acd',bot:'#2f3b52',w:1},madre:{h:.95,hair:'#4a2a1a',top:'#d2552e',bot:'#d2552e',sk:1,lg:1}};
 const RT={dorm:['Dormitorio','#a1887f','wood'],bano:['Baño','#4fc3f7','tile'],coc:['Cocina','#ffb74d','tile'],sala:['Sala','#81c784','wood'],com:['Comedor','#ba68c8','wood'],pas:['Pasadizo','#90a4ae',''],pat:['Patio','#aed581',''],aula:['Aula','#64b5f6','']};
 const MC={Sismo:'#e65100',Tsunami:'#1565c0',Huaico:'#795548',Incendio:'#d32f2f',General:'#1b8a3a',Friaje:'#00838f',Inundación:'#0277bd',Emergencia:'#c62828'};
@@ -132,7 +135,7 @@ const snap=v=>Math.round(v/20)*20,push=()=>{undo.push(JSON.stringify(items));if(
 function persist(){try{localStorage.setItem(KEY,JSON.stringify({items,n:$('#name').value,g:$('#grade').value,t:$('#ttl').value,bg:$('#bg').value}))}catch(e){}}
 try{const d=JSON.parse(localStorage.getItem(KEY)||'null');if(d){items=d.items||[];$('#name').value=d.n||'';$('#grade').value=d.g||'';$('#ttl').value=d.t||'';if(d.bg)$('#bg').value=d.bg}}catch(e){}
 const sb=(o,g)=>Object.entries(o).map(([k,v])=>`<button class="sg" data-sign="${k}"><i ${g?`class="p" style="border-color:${v[2]}"`:`style="background:${v[2]}"`}>${v[0]}</i>${v[1]}</button>`).join('');
-$('#signs').innerHTML=sb(SG);$('#house').innerHTML=sb(HS);$('#pers').innerHTML=Object.entries(PS).map(([k,v])=>`<button class="sg" data-sign="${k}"><img src="${pImg(k)}" alt="" width="36" height="50">${v[1]}</button>`).join('');
+$('#signs').innerHTML=sb(SG);$('#house').innerHTML=sb(HS);$('#school').innerHTML=sb(CS);$('#pers').innerHTML=Object.entries(PS).map(([k,v])=>`<button class="sg" data-sign="${k}"><img src="${pImg(k)}" alt="" width="36" height="50">${v[1]}</button>`).join('');
 $('#sws').innerHTML=SW.map(c=>`<button class="sw" data-c="${c}" style="background:${c}" aria-label="Color ${c}"></button>`).join('');
 $('#msgs').innerHTML=MS.map((m,i)=>`<button data-m="${i}" style="border-left-color:${MC[m[0]]}"><small style="color:${MC[m[0]]}">${m[0]}</small>${m[1]}</button>`).join('');
 function setCol(c){col=c;$('#col').value=c;document.querySelectorAll('.sw').forEach(b=>b.classList.toggle('on',b.dataset.c===c))}
@@ -214,20 +217,21 @@ $('#red').onclick=()=>{if(redo.length){undo.push(JSON.stringify(items));items=JS
 $('#grid').onclick=e=>{grid=!grid;e.target.classList.toggle('on',grid);commit()};
 $('#clr').onclick=()=>{if(items.length&&confirm('¿Borrar todo el croquis?')){push();items=[];sel=null;commit()}};
 $('#cls').onclick=()=>$('#dlg').classList.remove('open');
-$('#exp').onclick=()=>{const n={};items.forEach(i=>{if(i.t==='sign')n[i.k]=1});const ks=Object.keys(n),rows=Math.ceil(ks.length/4),top=84,bot=rows?rows*44+34:10;
+function full(){const n={};items.forEach(i=>{if(i.t==='sign')n[i.k]=1});const ks=Object.keys(n),rows=Math.ceil(ks.length/4),top=84,bot=rows?rows*44+34:10;
 const c=document.createElement('canvas');c.width=W;c.height=top+H+bot;const g=c.getContext('2d');g.fillStyle='#fff';g.fillRect(0,0,W,c.height);
 const grad=g.createLinearGradient(0,0,W,0);grad.addColorStop(0,'#0f6e4a');grad.addColorStop(.6,'#1aa379');grad.addColorStop(1,'#f2b600');g.fillStyle=grad;g.fillRect(0,0,W,top);
 const keep=sel;sel=null;const og=grid;grid=false;draw(cx,false);g.drawImage(cv,0,top);sel=keep;grid=og;draw(cx,true);
 g.fillStyle='#fff';g.textBaseline='alphabetic';g.font='bold 28px Fredoka,sans-serif';g.fillText($('#ttl').value||'Mi croquis de seguridad',18,50);g.font='bold 12px sans-serif';g.fillText('IE N° 0148 MAESTRO VÍCTOR RAÚL HAYA DE LA TORRE',18,20);g.font='15px sans-serif';g.fillText('Estudiante: '+($('#name').value||'________')+'    Grado y sección: '+($('#grade').value||'______'),18,73);
 g.fillStyle='#111';if(ks.length){g.font='bold 15px sans-serif';g.fillText('Leyenda',16,top+H+24)}
 ks.forEach((k,i)=>{const x=16+(i%4)*235,y=top+H+50+Math.floor(i/4)*44;drawSign(g,k,x+18,y,0,34);g.fillStyle='#111';g.font='14px sans-serif';g.textAlign='left';g.fillText(K[k][1],x+44,y+5)});
-$('#out').src=c.toDataURL('image/png');$('#dlg').classList.add('open')};
+return c}
+$('#exp').onclick=()=>{$('#out').src=full().toDataURL('image/png');$('#dlg').classList.add('open')};
 let db=null,au=null,D=[];
 const ok=()=>!FB.apiKey.startsWith('PEGA');
 try{if(ok()){firebase.initializeApp(FB);db=firebase.firestore();au=firebase.auth()}}catch(e){console.error(e)}
 const ee=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const fd=d=>d.ts&&d.ts.toDate?d.ts.toDate().toLocaleString('es-PE'):'';
-function jpg(){const k=sel,g=grid;sel=null;grid=false;draw(cx,false);const u=cv.toDataURL('image/jpeg',.6);sel=k;grid=g;draw(cx,true);return u}
+function jpg(){return full().toDataURL('image/jpeg',.85)}
 $('#snd').onclick=async()=>{const b=$('#snd');
 if(!db){alert('Falta configurar Firebase en el archivo (bloque FB al inicio del script).');return}
 if(!$('#name').value.trim()||!$('#ttl').value.trim()||!$('#grade').value){alert('Escribe tu nombre, elige tu sección y escribe el título de tu trabajo antes de enviar.');return}
