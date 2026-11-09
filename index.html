@@ -71,7 +71,7 @@ input,select{background:var(--bg);border:1px solid var(--bd);border-radius:10px;
 <main>
 <div class="card">
 <input id="ttl" placeholder="✏️ Título de tu trabajo" aria-label="Título del trabajo">
-<div class="two"><input id="name" placeholder="Nombre del estudiante" aria-label="Nombre"><input id="grade" placeholder="Grado y sección" aria-label="Grado"></div>
+<div class="two"><input id="name" placeholder="Nombre del estudiante" aria-label="Nombre"><select id="grade" aria-label="Sección"><option value="">Sección…</option><option>3.° A</option><option>3.° B</option><option>3.° C</option><option>3.° D</option><option>3.° E</option><option>3.° F</option></select></div>
 <div class="row" id="tools">
 <button data-tool="select" class="on">✋ Mover</button>
 <button data-tool="wall">🧱 Pared</button>
@@ -104,7 +104,7 @@ input,select{background:var(--bg);border:1px solid var(--bd);border-radius:10px;
 <div id="tp" class="ov"><div style="max-width:1200px;margin:auto">
 <div class="row"><h2 style="flex:1">👩‍🏫 Panel docente</h2><button id="tcl">✖ Cerrar</button></div>
 <div id="lg" class="card" style="max-width:380px"><h2>Ingresar</h2><input id="em" type="email" placeholder="Correo del docente"><input id="pw" type="password" placeholder="Contraseña" style="margin-top:6px"><button id="li" class="on" style="margin-top:8px">Entrar</button><div id="lm" style="font-size:13px;margin-top:6px"></div></div>
-<div id="ls" style="display:none"><div class="row"><input id="fl" placeholder="Filtrar por grado, nombre o título" style="flex:1;min-width:200px"><button id="rf">🔄 Actualizar</button><button id="csv">📊 Notas (CSV)</button><button id="lo">Salir</button></div><div id="cnt" style="font-size:13px;color:var(--mut)"></div><div class="tg" id="tg"></div></div>
+<div id="ls" style="display:none"><div class="row"><select id="sf" aria-label="Sección" style="width:auto"><option value="">Todas las secciones</option></select><input id="fl" placeholder="Buscar por nombre o título" style="flex:1;min-width:200px"><button id="rf">🔄 Actualizar</button><button id="csv">📊 Notas (CSV)</button><button id="lo">Salir</button></div><div id="cnt" style="font-size:13px;color:var(--mut)"></div><div class="tg" id="tg"></div></div>
 </div></div>
 <div id="dlg"><div><p>Mantén presionada la imagen (o clic derecho) y elige «Guardar imagen».</p><img id="out" alt="Croquis terminado"><p><button id="cls">Cerrar</button></p></div></div>
 <script>
@@ -230,7 +230,7 @@ const fd=d=>d.ts&&d.ts.toDate?d.ts.toDate().toLocaleString('es-PE'):'';
 function jpg(){const k=sel,g=grid;sel=null;grid=false;draw(cx,false);const u=cv.toDataURL('image/jpeg',.6);sel=k;grid=g;draw(cx,true);return u}
 $('#snd').onclick=async()=>{const b=$('#snd');
 if(!db){alert('Falta configurar Firebase en el archivo (bloque FB al inicio del script).');return}
-if(!$('#name').value.trim()||!$('#ttl').value.trim()){alert('Escribe tu nombre y el título de tu trabajo antes de enviar.');return}
+if(!$('#name').value.trim()||!$('#ttl').value.trim()||!$('#grade').value){alert('Escribe tu nombre, elige tu sección y escribe el título de tu trabajo antes de enviar.');return}
 if(!items.length){alert('Primero dibuja tu croquis.');return}
 b.disabled=true;b.textContent='Enviando…';
 try{await db.collection('croquis').add({nombre:$('#name').value.trim(),grado:$('#grade').value.trim(),titulo:$('#ttl').value.trim(),items:JSON.stringify(items),bg:$('#bg').value,img:jpg(),nota:null,coment:'',ts:firebase.firestore.FieldValue.serverTimestamp()});
@@ -242,15 +242,17 @@ $('#tcl').onclick=()=>$('#tp').classList.remove('open');
 $('#li').onclick=()=>{if(!au)return;$('#lm').textContent='Ingresando…';au.signInWithEmailAndPassword($('#em').value.trim(),$('#pw').value).catch(()=>{$('#lm').textContent='No se pudo ingresar: revisa correo y contraseña.'})};
 $('#lo').onclick=()=>au&&au.signOut();
 if(au)au.onAuthStateChanged(u=>{$('#lg').style.display=u?'none':'';$('#ls').style.display=u?'':'none';if(u)load()});
-async function load(){try{const q=await db.collection('croquis').orderBy('ts','desc').limit(300).get();D=q.docs.map(d=>({id:d.id,...d.data()}));show()}catch(e){$('#cnt').textContent='No se pudo leer: '+e.message}}
-function show(){const q=$('#fl').value.toLowerCase(),L=D.filter(d=>((d.grado||'')+' '+d.nombre+' '+d.titulo).toLowerCase().includes(q));$('#cnt').textContent=L.length+' trabajo(s)';
-$('#tg').innerHTML=L.map(d=>`<div class="card" data-id="${ee(d.id)}"><img src="${/^data:image\//.test(d.img)?ee(d.img):''}" alt="Croquis"><b>${ee(d.titulo)}</b><div style="font-size:13px">${ee(d.nombre)} · ${ee(d.grado)}<br><small>${ee(fd(d))}</small></div><div class="row" style="margin:6px 0 0"><input type="number" min="0" max="20" class="nt" value="${d.nota==null?'':ee(d.nota)}" placeholder="Nota 0-20" style="width:110px"><button data-a="sv">💾 Guardar</button></div><input class="cm" value="${ee(d.coment)}" placeholder="Comentario" style="margin-top:6px"><div class="row" style="margin:6px 0 0"><button data-a="ld">✏️ Abrir</button><button data-a="dl">🗑️ Eliminar</button></div></div>`).join('')}
-$('#fl').oninput=show;$('#rf').onclick=load;
+async function load(){try{const q=await db.collection('croquis').orderBy('ts','desc').limit(300).get();D=q.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(a.grado||'').localeCompare(b.grado||'','es')||(a.nombre||'').localeCompare(b.nombre||'','es'));const cur=$('#sf').value,gs=[...new Set(D.map(d=>d.grado||'Sin sección'))];$('#sf').innerHTML='<option value="">Todas las secciones</option>'+gs.map(x=>`<option>${ee(x)}</option>`).join('');$('#sf').value=cur;show()}catch(e){$('#cnt').textContent='No se pudo leer: '+e.message}}
+function show(){const q=$('#fl').value.toLowerCase(),sf=$('#sf').value,L=D.filter(d=>(!sf||(d.grado||'Sin sección')===sf)&&((d.nombre||'')+' '+(d.titulo||'')).toLowerCase().includes(q));$('#cnt').textContent=L.length+' trabajo(s)';
+const n={};L.forEach(d=>{const k=d.grado||'Sin sección';n[k]=(n[k]||0)+1});let g=null;
+$('#tg').innerHTML=L.map(d=>{const k=d.grado||'Sin sección';let h='';if(k!==g){g=k;h=`<h2 style="grid-column:1/-1;margin:12px 0 0;padding-bottom:4px;border-bottom:2px solid var(--ac)">📚 ${ee(k)} <small style="font-weight:400;color:var(--mut)">· ${n[k]} trabajo(s)</small></h2>`}
+return h+`<div class="card" data-id="${ee(d.id)}"><img src="${/^data:image\//.test(d.img)?ee(d.img):''}" alt="Croquis"><b>${ee(d.titulo)}</b><div style="font-size:13px">${ee(d.nombre)} · ${ee(d.grado)}<br><small>${ee(fd(d))}</small></div><div class="row" style="margin:6px 0 0"><input type="number" min="0" max="20" class="nt" value="${d.nota==null?'':ee(d.nota)}" placeholder="Nota 0-20" style="width:110px"><button data-a="sv">💾 Guardar</button></div><input class="cm" value="${ee(d.coment)}" placeholder="Comentario" style="margin-top:6px"><div class="row" style="margin:6px 0 0"><button data-a="dw">📥 Descargar</button><button data-a="dl">🗑️ Eliminar</button></div></div>`}).join('')}
+$('#fl').oninput=show;$('#sf').onchange=show;$('#rf').onclick=load;
 $('#tg').onclick=async e=>{const b=e.target.closest('button'),im=e.target.closest('img'),c=e.target.closest('[data-id]');if(!c)return;const d=D.find(x=>x.id===c.dataset.id);if(!d)return;
 if(im&&im.src){$('#out').src=im.src;$('#dlg').classList.add('open');return}if(!b)return;const a=b.dataset.a;
 try{if(a==='sv'){const n=c.querySelector('.nt').value,cm=c.querySelector('.cm').value;await db.collection('croquis').doc(d.id).update({nota:n===''?null:Number(n),coment:cm});d.nota=n===''?null:Number(n);d.coment=cm;b.textContent='✅ Guardado';setTimeout(()=>b.textContent='💾 Guardar',1500)}
 else if(a==='dl'&&confirm('¿Eliminar este trabajo?')){await db.collection('croquis').doc(d.id).delete();D=D.filter(x=>x!==d);show()}
-else if(a==='ld'){items=JSON.parse(d.items||'[]');$('#name').value=d.nombre||'';$('#grade').value=d.grado||'';$('#ttl').value=d.titulo||'';if(d.bg)$('#bg').value=d.bg;sel=null;undo=[];redo=[];commit();$('#tp').classList.remove('open')}}
+else if(a==='dw'&&/^data:image\//.test(d.img)){const z=document.createElement('a');z.href=d.img;z.download=((d.grado||'')+' - '+(d.nombre||'')+' - '+(d.titulo||'croquis')).replace(/[\\\/:*?\"<>|]+/g,'')+'.jpg';z.click()}}
 catch(x){alert('No se pudo completar la acción: '+x.message)}};
 $('#csv').onclick=()=>{const cs=v=>{v=String(v==null?'':v);if(/^[=+\-@]/.test(v))v="'"+v;return '"'+v.replace(/"/g,'""')+'"'};
 const r=[['Grado','Estudiante','Título','Nota','Comentario','Fecha'],...D.map(d=>[d.grado,d.nombre,d.titulo,d.nota,d.coment,fd(d)])];
