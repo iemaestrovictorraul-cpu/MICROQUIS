@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mi croquis de seguridad</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;700&display=swap">
+<style>
+:root{--bg:#eef4ef;--fg:#1d2a24;--card:#fff;--bd:#d3ddd5;--ac:#168a5c;--ac2:#e0f4ea;--mut:#5b6e63;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#101a15;--fg:#e6efe9;--card:#1b2a22;--bd:#34493d;--ac:#4fd08e;--ac2:#243a2e;--mut:#9db3a5;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#101a15;--fg:#e6efe9;--card:#1b2a22;--bd:#34493d;--ac:#4fd08e;--ac2:#243a2e;--mut:#9db3a5;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.4 "Trebuchet MS","Segoe UI",system-ui,sans-serif}
+.hero{background:linear-gradient(120deg,#0f6e4a,#1aa379 60%,#f2b600);color:#fff;padding:16px 18px;border-radius:0 0 22px 22px}
+h1,h2{font-family:Fredoka,"Trebuchet MS",sans-serif;margin:0}
+h1{font-size:26px}
+.hero p{margin:2px 0 0;opacity:.92;font-size:13px}
+.sch{font-weight:700;font-size:12px;letter-spacing:.06em;margin-bottom:2px}
+.sg img{display:block}
+.wrap{display:grid;grid-template-columns:230px 1fr;gap:14px;padding:14px 16px 24px;max-width:1300px;margin:auto}
+@media(max-width:800px){.wrap{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:12px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+.card h2{font-size:15px;margin-bottom:8px}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}
+@media(max-width:800px){.grid{grid-template-columns:repeat(4,1fr)}}
+button,input,select{font:inherit;color:var(--fg)}
+button{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:7px 10px;cursor:pointer;transition:.12s}
+button:hover{border-color:var(--ac);transform:translateY(-1px)}
+button.on{background:var(--ac2);border-color:var(--ac);font-weight:700}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--ac);outline-offset:1px}
+input,select{background:var(--bg);border:1px solid var(--bd);border-radius:10px;padding:8px 10px;width:100%}
+.sg{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:11px;padding:6px 3px;text-align:center}
+.sg i{font-style:normal;font-size:22px;width:38px;height:38px;border-radius:10px;display:grid;place-items:center;color:#fff}
+.sg i.p{border-radius:50%;background:#fff!important;border:3px solid}
+.row{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:8px}
+.sep{width:1px;align-self:stretch;background:var(--bd)}
+#ttl{font:700 20px Fredoka,sans-serif;margin-bottom:8px}
+.two{display:grid;grid-template-columns:2fr 1fr;gap:6px;margin-bottom:8px}
+.sw{width:26px;height:26px;padding:0;border-radius:50%;border:2px solid var(--bd)}
+.sw.on{outline:3px solid var(--ac);outline-offset:1px}
+#col{width:38px;height:32px;padding:2px;flex:none}
+#cv{width:100%;height:auto;display:block;border:1px solid var(--bd);border-radius:12px;touch-action:none;cursor:crosshair;box-shadow:0 4px 14px rgba(0,0,0,.1)}
+#st{font-size:12px;color:var(--mut);margin:8px 0}
+#leg{display:flex;flex-wrap:wrap;gap:6px;font-size:13px}
+#leg span{display:flex;align-items:center;gap:6px;background:var(--bg);border:1px solid var(--bd);border-radius:20px;padding:2px 10px 2px 3px}
+#leg b{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:400;font-size:14px}
+.msgs{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:8px}
+.msgs button{text-align:left;font-size:13px;border-left-width:6px}
+.msgs small{display:block;font-weight:700;text-transform:uppercase;font-size:10px;letter-spacing:.05em}
+#dlg{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;padding:16px;z-index:9}
+#dlg.open{display:flex}
+#dlg div{background:var(--card);border-radius:14px;padding:12px;max-width:900px;max-height:92vh;overflow:auto}
+#dlg img{width:100%;display:block;border:1px solid var(--bd)}
+.hero{position:relative}
+.tb{position:absolute;right:14px;top:12px;background:rgba(255,255,255,.2);color:#fff;border-color:rgba(255,255,255,.5)}
+.ov{position:fixed;inset:0;background:var(--bg);display:none;overflow:auto;z-index:8;padding:16px}
+.ov.open{display:block}
+.tg{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin-top:10px}
+.tg img{width:100%;border-radius:8px;border:1px solid var(--bd);cursor:zoom-in;margin-bottom:6px}
+</style>
+</head>
+<body>
+<div class="hero"><button id="tbtn" class="tb">👩‍🏫 Docente</button><div class="sch">IE N° 0148 MAESTRO VÍCTOR RAÚL HAYA DE LA TORRE</div><h1>🗺️ Mi croquis de seguridad</h1><p>Dibuja tu plano, coloca personajes y señales, y comparte mensajes para prevenir desastres.</p></div>
+<div class="wrap">
+<aside>
+<div class="card"><h2>👨‍👩‍👧 Personajes</h2><div class="grid" id="pers"></div></div>
+<div class="card"><h2>🏠 Para construir la casa</h2><div class="grid" id="house"></div></div>
+<div class="card"><h2>🚸 Señalizaciones</h2><div class="grid" id="signs"></div></div>
+</aside>
+<main>
+<div class="card">
+<input id="ttl" placeholder="✏️ Título de tu trabajo" aria-label="Título del trabajo">
+<div class="two"><input id="name" placeholder="Nombre del estudiante" aria-label="Nombre"><input id="grade" placeholder="Grado y sección" aria-label="Grado"></div>
+<div class="row" id="tools">
+<button data-tool="select" class="on">✋ Mover</button>
+<button data-tool="wall">🧱 Pared</button>
+<button data-tool="room">⬛ Ambiente</button>
+<button data-tool="arrow">➡️ Ruta</button>
+<button data-tool="stairs">🪜 Escalera</button>
+<button data-tool="text">🔤 Texto</button>
+<select id="rt" aria-label="Tipo de ambiente" style="width:auto"></select>
+<span class="sep"></span>
+<input id="lbl" placeholder="Nombre del ambiente o texto" aria-label="Texto" style="flex:1;min-width:150px;width:auto">
+</div>
+<div class="row" id="pal"><b style="font-size:13px">🎨 Color</b><input type="color" id="col" value="#263238" aria-label="Color"><span id="sws" class="row" style="margin:0"></span>
+<span class="sep"></span><label style="font-size:13px">Fondo <select id="bg" style="width:auto"><option value="#ffffff">Blanco</option><option value="#e4f2dc">Pasto</option><option value="#f7f0df">Crema</option><option value="#dcecf7">Celeste</option></select></label></div>
+<canvas id="cv"></canvas>
+<div class="row" style="margin:10px 0 0">
+<button id="rot">🔄 Girar</button><button id="big">➕ Grande</button><button id="small">➖ Pequeño</button>
+<button id="dup">📑 Duplicar</button><button id="top">⬆️ Al frente</button><button id="del">🗑️ Borrar</button>
+<span class="sep"></span>
+<button id="und">↩️ Deshacer</button><button id="red">↪️ Rehacer</button><button id="grid" class="on">▦ Cuadrícula</button><button id="clr">🧹 Limpiar</button>
+<span class="sep"></span>
+<button id="exp">📥 Ver imagen para descargar</button>
+<button id="snd" class="on">📤 Enviar a mi docente</button>
+</div>
+<div id="st"></div>
+<div id="leg"></div>
+</div>
+<div class="card"><h2>🛟 Mensajes de prevención (toca para añadir al croquis)</h2><div class="msgs" id="msgs"></div></div>
+</main>
+</div>
+<div id="tp" class="ov"><div style="max-width:1200px;margin:auto">
+<div class="row"><h2 style="flex:1">👩‍🏫 Panel docente</h2><button id="tcl">✖ Cerrar</button></div>
+<div id="lg" class="card" style="max-width:380px"><h2>Ingresar</h2><input id="em" type="email" placeholder="Correo del docente"><input id="pw" type="password" placeholder="Contraseña" style="margin-top:6px"><button id="li" class="on" style="margin-top:8px">Entrar</button><div id="lm" style="font-size:13px;margin-top:6px"></div></div>
+<div id="ls" style="display:none"><div class="row"><input id="fl" placeholder="Filtrar por grado, nombre o título" style="flex:1;min-width:200px"><button id="rf">🔄 Actualizar</button><button id="csv">📊 Notas (CSV)</button><button id="lo">Salir</button></div><div id="cnt" style="font-size:13px;color:var(--mut)"></div><div class="tg" id="tg"></div></div>
+</div></div>
+<div id="dlg"><div><p>Mantén presionada la imagen (o clic derecho) y elige «Guardar imagen».</p><img id="out" alt="Croquis terminado"><p><button id="cls">Cerrar</button></p></div></div>
+<script>
+/* ===== CONFIGURACIÓN DE FIREBASE: reemplaza con los datos de tu proyecto ===== */
+const FB={apiKey:"AIzaSyBVXveOsdME3gzVwWrZ5yg0Yfv5ffZNx50",authDomain:"croquis-b4d19.firebaseapp.com",projectId:"croquis-b4d19",storageBucket:"croquis-b4d19.firebasestorage.app",messagingSenderId:"745757263375",appId:"1:745757263375:web:4bfc80c3dd22f87ed8057a"};
+</script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script>
+const SG={safe:['🧍','Zona segura','#1b8a3a'],exit:['🚪','Salida','#1b8a3a'],route:['⬆️','Ruta de evacuación','#1b8a3a'],meet:['👥','Punto de reunión','#1565c0'],ext:['🧯','Extintor','#d32f2f'],aid:['⛑️','Botiquín','#1b8a3a'],danger:['⚠️','Zona de peligro','#c98f00'],stairs:['🪜','Escalera','#6d4c41'],alarm:['🚨','Alarma','#d32f2f'],elec:['⚡','Peligro eléctrico','#c98f00'],pack:['🎒','Mochila de emergencia','#1b8a3a'],lamp:['🔦','Linterna','#546e7a'],acc:['♿','Acceso accesible','#1565c0'],phone:['📞','Teléfono de emergencia','#1565c0'],stop:['⛔','Prohibido bloquear','#d32f2f'],water:['💧','Llave de agua','#0277bd']};
+const HS={bed:['🛏️','Cama','#8d6e63'],wc:['🚽','Inodoro','#26a6c4'],shower:['🚿','Ducha','#26a6c4'],sink:['🚰','Lavatorio','#26a6c4'],sofa:['🛋️','Sofá','#7e57c2'],stove:['🍳','Cocina','#ef6c00'],fridge:['🧊','Refrigeradora','#78909c'],table:['🍽️','Mesa','#8d6e63'],chair:['🪑','Silla','#8d6e63'],win:['🪟','Ventana','#4fc3f7'],door:['🚪','Puerta','#8d6e63'],tree:['🌳','Árbol','#43a047']};
+const PS={nino:['👦','Niño','#f4a300'],nina:['👧','Niña','#e5518a'],joven:['🧑','Joven','#3b82c4'],padre:['👨','Padre','#6a5acd'],madre:['👩','Madre','#d2552e']};
+const K={...SG,...HS,...PS};
+const PP={nino:{h:.7,hair:'#3b2a1a',top:'#f4a300',bot:'#1e4f8a'},nina:{h:.72,hair:'#2b1b12',top:'#e5518a',bot:'#e5518a',sk:1,lg:1},joven:{h:.95,hair:'#222',top:'#3b82c4',bot:'#333f5c'},padre:{h:1,hair:'#4a3626',top:'#6a5acd',bot:'#2f3b52',w:1},madre:{h:.95,hair:'#4a2a1a',top:'#d2552e',bot:'#d2552e',sk:1,lg:1}};
+const RT={dorm:['Dormitorio','#a1887f','wood'],bano:['Baño','#4fc3f7','tile'],coc:['Cocina','#ffb74d','tile'],sala:['Sala','#81c784','wood'],com:['Comedor','#ba68c8','wood'],pas:['Pasadizo','#90a4ae',''],pat:['Patio','#aed581',''],aula:['Aula','#64b5f6','']};
+const MC={Sismo:'#e65100',Tsunami:'#1565c0',Huaico:'#795548',Incendio:'#d32f2f',General:'#1b8a3a',Friaje:'#00838f',Inundación:'#0277bd',Emergencia:'#c62828'};
+const MS=[['Sismo','Durante un sismo: agáchate, cúbrete y sujétate. Mantén la calma.'],['Sismo','No corras ni empujes: evacúa por la ruta señalizada.'],['Sismo','Aléjate de ventanas, vidrios y objetos que puedan caer.'],['Tsunami','Si el sismo es fuerte y largo, sube a una zona alta sin esperar la alarma.'],['Huaico','Con lluvias intensas, aléjate de quebradas y ríos.'],['Incendio','Cúbrete nariz y boca, avanza agachado y no uses ascensores.'],['General','Ten lista tu mochila de emergencia y conoce tu punto de reunión.'],['General','Escucha a tu docente, mantén el orden y ayuda a quien lo necesite.'],['Sismo','Después del sismo, ve al punto de reunión y espera las indicaciones.'],['Sismo','Si estás en el patio, aléjate de paredes, postes y cables.'],['Tsunami','Cerca de la costa, conoce tu ruta hacia la zona alta.'],['Huaico','No cruces ríos, canales ni zonas inundadas.'],['Incendio','Si hay humo, avanza agachado y sal por la ruta más cercana.'],['Friaje','Abrígate bien y evita salir en las horas de más frío.'],['Inundación','No camines por zonas inundadas: pueden tener cables y huecos.'],['Emergencia','Bomberos 116, Policía 105 y SAMU 106: memoriza estos números.'],['General','Mantén libres las puertas, pasadizos y escaleras.'],['General','Practica los simulacros y ayuda a tus compañeros.']];
+const DEF={wall:'#263238',room:'#546e7a',arrow:'#1b8a3a',text:'#111111',stairs:'#6d4c41'};
+const SW=['#263238','#d32f2f','#e65100','#f2b600','#1b8a3a','#1565c0','#8e24aa','#6d4c41'];
+const $=s=>document.querySelector(s),cv=$('#cv'),W=960,H=600,cx=cv.getContext('2d'),KEY='croquis_v1';
+cv.width=W;cv.height=H;
+let items=[],tool='select',sk=null,sel=null,drag=null,cur=null,undo=[],redo=[],col='#263238',grid=true,rf='';
+const snap=v=>Math.round(v/20)*20,push=()=>{undo.push(JSON.stringify(items));if(undo.length>60)undo.shift();redo=[]};
+function persist(){try{localStorage.setItem(KEY,JSON.stringify({items,n:$('#name').value,g:$('#grade').value,t:$('#ttl').value,bg:$('#bg').value}))}catch(e){}}
+try{const d=JSON.parse(localStorage.getItem(KEY)||'null');if(d){items=d.items||[];$('#name').value=d.n||'';$('#grade').value=d.g||'';$('#ttl').value=d.t||'';if(d.bg)$('#bg').value=d.bg}}catch(e){}
+const sb=(o,g)=>Object.entries(o).map(([k,v])=>`<button class="sg" data-sign="${k}"><i ${g?`class="p" style="border-color:${v[2]}"`:`style="background:${v[2]}"`}>${v[0]}</i>${v[1]}</button>`).join('');
+$('#signs').innerHTML=sb(SG);$('#house').innerHTML=sb(HS);$('#pers').innerHTML=Object.entries(PS).map(([k,v])=>`<button class="sg" data-sign="${k}"><img src="${pImg(k)}" alt="" width="36" height="50">${v[1]}</button>`).join('');
+$('#sws').innerHTML=SW.map(c=>`<button class="sw" data-c="${c}" style="background:${c}" aria-label="Color ${c}"></button>`).join('');
+$('#msgs').innerHTML=MS.map((m,i)=>`<button data-m="${i}" style="border-left-color:${MC[m[0]]}"><small style="color:${MC[m[0]]}">${m[0]}</small>${m[1]}</button>`).join('');
+function setCol(c){col=c;$('#col').value=c;document.querySelectorAll('.sw').forEach(b=>b.classList.toggle('on',b.dataset.c===c))}
+function setTool(t,k){tool=t;sk=k||null;rf='';if(DEF[t])setCol(DEF[t]);
+document.querySelectorAll('[data-tool],[data-sign]').forEach(b=>b.classList.toggle('on',(t!=='sign'&&b.dataset.tool===t)||(t==='sign'&&b.dataset.sign===k)));
+$('#st').textContent=t==='sign'?'Toca el plano para colocar: '+K[k][1]+'. Puedes colocar varios.':{select:'Toca un elemento para moverlo, girarlo, cambiarle el color o borrarlo.',text:'Escribe el texto arriba y toca el plano.',room:'Escribe el nombre arriba y arrastra para dibujar el ambiente.',wall:'Arrastra en el plano para dibujar una pared.',arrow:'Arrastra para dibujar la ruta de evacuación.',stairs:'Arrastra para dibujar una escalera.'}[t]}
+document.querySelectorAll('[data-tool]').forEach(b=>b.onclick=()=>setTool(b.dataset.tool));
+document.querySelectorAll('[data-sign]').forEach(b=>b.onclick=()=>setTool('sign',b.dataset.sign));
+document.querySelectorAll('.sw').forEach(b=>b.onclick=()=>recolor(b.dataset.c));
+$('#col').oninput=e=>recolor(e.target.value);
+$('#rt').innerHTML='<option value="">Tipo de ambiente…</option>'+Object.entries(RT).map(([k,v])=>`<option value="${k}">${v[0]}</option>`).join('');
+$('#rt').onchange=e=>{const v=RT[e.target.value];if(v){setTool('room');$('#lbl').value=v[0];setCol(v[1]);rf=e.target.value}};
+function recolor(c){setCol(c);if(sel&&sel.t!=='sign'&&sel.t!=='msg'){sel.c=c;commit()}}
+function wrapT(t,mw,f){cx.font=f;const L=[];let l='';for(const x of t.split(' ')){const n=l?l+' '+x:x;if(cx.measureText(n).width>mw&&l){L.push(l);l=x}else l=n}L.push(l);return L}
+document.querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>{const m=MS[b.dataset.m],n=items.filter(i=>i.t==='msg').length%6,L=wrapT(m[1],250,'13px sans-serif');push();sel={t:'msg',x:20+n*30,y:20+n*30,tag:m[0],lines:L,w:274,h:36+L.length*17,c:MC[m[0]]};items.push(sel);commit()});
+function drawSign(c,k,x,y,r,s){if(PS[k]){drawPerson(c,k,x,y,r,s);return}c.save();c.translate(x,y);c.rotate(r);const v=K[k];
+if(PS[k]){c.fillStyle='#fff';c.strokeStyle=v[2];c.lineWidth=Math.max(3,s*.07);c.beginPath();c.arc(0,0,s/2,0,7);c.fill();c.stroke()}
+else{c.fillStyle=v[2];c.beginPath();c.roundRect(-s/2,-s/2,s,s,s*.18);c.fill();c.strokeStyle='#fff';c.lineWidth=2;c.stroke()}
+c.font=(s*.58)+'px sans-serif';c.textAlign='center';c.textBaseline='middle';c.fillText(v[0],0,s*.03);c.restore()}
+function drawPerson(c,k,x,y,r,s){const p=PP[k],H=s*1.4*p.h,u=H/100,S='#f1c69b',w=p.w?17:14;c.save();c.translate(x,y);c.rotate(r);c.translate(0,-H/2);c.lineCap='round';
+c.lineWidth=8*u;c.strokeStyle=p.sk?S:p.bot;c.beginPath();c.moveTo(-6*u,56*u);c.lineTo(-6*u,93*u);c.moveTo(6*u,56*u);c.lineTo(6*u,93*u);c.stroke();
+c.fillStyle='#222';[-6,6].forEach(a=>{c.beginPath();c.ellipse(a*u+(a>0?2:-2)*u,96*u,7*u,3.5*u,0,0,7);c.fill()});
+c.fillStyle=p.top;c.beginPath();c.roundRect(-w*u,24*u,2*w*u,p.sk?26*u:38*u,5*u);c.fill();
+if(p.sk){c.fillStyle=p.bot;c.beginPath();c.moveTo(-13*u,46*u);c.lineTo(13*u,46*u);c.lineTo(21*u,76*u);c.lineTo(-21*u,76*u);c.closePath();c.fill()}
+c.lineWidth=6*u;c.strokeStyle=p.top;c.beginPath();c.moveTo(-w*u,28*u);c.lineTo((-w-5)*u,55*u);c.moveTo(w*u,28*u);c.lineTo((w+5)*u,55*u);c.stroke();
+c.fillStyle=S;[-1,1].forEach(a=>{c.beginPath();c.arc(a*(w+5)*u,57*u,3.6*u,0,7);c.fill()});
+if(p.lg){c.fillStyle=p.hair;c.beginPath();c.roundRect(-12.5*u,1*u,25*u,34*u,11*u);c.fill()}
+c.fillStyle=S;c.beginPath();c.arc(0,13*u,11*u,0,7);c.fill();
+c.fillStyle=p.hair;c.beginPath();c.arc(0,12.5*u,11.6*u,Math.PI,0);c.fill();
+c.fillStyle='#222';[-4,4].forEach(a=>{c.beginPath();c.arc(a*u,14*u,1.4*u,0,7);c.fill()});
+c.strokeStyle='#a0522d';c.lineWidth=1.2*u;c.beginPath();c.arc(0,17*u,3.5*u,.2,Math.PI-.2);c.stroke();c.restore()}
+function pImg(k){const c=document.createElement('canvas');c.width=60;c.height=84;drawPerson(c.getContext('2d'),k,30,42,0,60);return c.toDataURL()}
+function draw(c,ui){c.fillStyle=$('#bg').value;c.fillRect(0,0,W,H);
+if(ui&&grid){c.strokeStyle='rgba(0,0,0,.08)';c.lineWidth=1;c.beginPath();for(let x=0;x<=W;x+=20){c.moveTo(x,0);c.lineTo(x,H)}for(let y=0;y<=H;y+=20){c.moveTo(0,y);c.lineTo(W,y)}c.stroke()}
+for(const it of items){c.save();const cc=it.c||'#263238';
+if(it.t==='room'){c.fillStyle=cc+'33';c.strokeStyle=cc;c.lineWidth=3;c.fillRect(it.x,it.y,it.w,it.h);if(it.f){c.save();c.beginPath();c.rect(it.x,it.y,it.w,it.h);c.clip();c.lineWidth=1;c.strokeStyle=cc+'66';c.beginPath();if(it.f==='tile'){for(let a=it.x;a<it.x+it.w;a+=20){c.moveTo(a,it.y);c.lineTo(a,it.y+it.h)}for(let b=it.y;b<it.y+it.h;b+=20){c.moveTo(it.x,b);c.lineTo(it.x+it.w,b)}}else{for(let b=it.y;b<it.y+it.h;b+=10){c.moveTo(it.x,b);c.lineTo(it.x+it.w,b)}}c.stroke();c.restore()}c.strokeRect(it.x,it.y,it.w,it.h);c.fillStyle='#1d2a24';c.font='bold 14px sans-serif';c.textAlign='center';c.textBaseline='middle';c.fillText(it.label||'',it.x+it.w/2,it.y+it.h/2)}
+else if(it.t==='wall'){c.strokeStyle=cc;c.lineWidth=7;c.lineCap='round';c.beginPath();c.moveTo(it.x1,it.y1);c.lineTo(it.x2,it.y2);c.stroke()}
+else if(it.t==='arrow'){const a=Math.atan2(it.y2-it.y1,it.x2-it.x1);c.strokeStyle=c.fillStyle=cc;c.lineWidth=5;c.lineCap='round';c.setLineDash([12,8]);c.beginPath();c.moveTo(it.x1,it.y1);c.lineTo(it.x2,it.y2);c.stroke();c.setLineDash([]);c.beginPath();c.moveTo(it.x2,it.y2);c.lineTo(it.x2-18*Math.cos(a-.5),it.y2-18*Math.sin(a-.5));c.lineTo(it.x2-18*Math.cos(a+.5),it.y2-18*Math.sin(a+.5));c.closePath();c.fill()}
+else if(it.t==='stairs'){c.fillStyle='#f3ece3';c.strokeStyle=cc;c.lineWidth=2;c.fillRect(it.x,it.y,it.w,it.h);c.strokeRect(it.x,it.y,it.w,it.h);c.beginPath();if(it.w>=it.h){for(let a=it.x+12;a<it.x+it.w;a+=12){c.moveTo(a,it.y);c.lineTo(a,it.y+it.h)}c.moveTo(it.x+6,it.y+it.h/2);c.lineTo(it.x+it.w-6,it.y+it.h/2)}else{for(let b=it.y+12;b<it.y+it.h;b+=12){c.moveTo(it.x,b);c.lineTo(it.x+it.w,b)}c.moveTo(it.x+it.w/2,it.y+6);c.lineTo(it.x+it.w/2,it.y+it.h-6)}c.stroke();c.fillStyle=cc;c.font='bold 11px sans-serif';c.textAlign='center';c.fillText('SUBE',it.x+it.w/2,it.y-5)}
+else if(it.t==='text'){c.fillStyle=cc;c.font='bold 18px sans-serif';c.textBaseline='alphabetic';c.fillText(it.label,it.x,it.y)}
+else if(it.t==='msg'){c.fillStyle='#fff';c.strokeStyle=cc;c.lineWidth=3;c.beginPath();c.roundRect(it.x,it.y,it.w,it.h,12);c.fill();c.stroke();c.textBaseline='alphabetic';c.fillStyle=cc;c.font='bold 12px sans-serif';c.fillText('⚠ '+it.tag.toUpperCase(),it.x+12,it.y+20);c.fillStyle='#222';c.font='13px sans-serif';it.lines.forEach((l,i)=>c.fillText(l,it.x+12,it.y+38+i*17))}
+else drawSign(c,it.k,it.x,it.y,it.r,it.s);
+c.restore()}
+if(ui&&sel&&items.includes(sel)){const b=box(sel);c.save();c.setLineDash([6,4]);c.strokeStyle='#e65100';c.lineWidth=2;c.strokeRect(b[0]-4,b[1]-4,b[2]-b[0]+8,b[3]-b[1]+8);c.restore()}}
+function box(it){if(it.t==='room'||it.t==='stairs')return[it.x,it.y,it.x+it.w,it.y+it.h];if(it.t==='msg')return[it.x,it.y,it.x+it.w,it.y+it.h];if(it.t==='wall'||it.t==='arrow')return[Math.min(it.x1,it.x2),Math.min(it.y1,it.y2),Math.max(it.x1,it.x2),Math.max(it.y1,it.y2)];if(it.t==='text'){cx.font='bold 18px sans-serif';return[it.x,it.y-18,it.x+cx.measureText(it.label).width,it.y+4]}if(PS[it.k]){const h=it.s*.7*PP[it.k].h,w=it.s*.3;return[it.x-w,it.y-h,it.x+w,it.y+h]}const h=it.s/2;return[it.x-h,it.y-h,it.x+h,it.y+h]}
+function dseg(p,a,b,c,d){const dx=c-a,dy=d-b,l=dx*dx+dy*dy||1,t=Math.max(0,Math.min(1,((p.x-a)*dx+(p.y-b)*dy)/l));return Math.hypot(p.x-a-t*dx,p.y-b-t*dy)}
+function hit(it,p){if(it.t==='wall'||it.t==='arrow')return dseg(p,it.x1,it.y1,it.x2,it.y2)<10;const b=box(it);return p.x>=b[0]&&p.x<=b[2]&&p.y>=b[1]&&p.y<=b[3]}
+function move(it,dx,dy){if('x'in it){it.x+=dx;it.y+=dy}else{it.x1+=dx;it.x2+=dx;it.y1+=dy;it.y2+=dy}}
+function pos(e){const r=cv.getBoundingClientRect();return{x:(e.clientX-r.left)*W/r.width,y:(e.clientY-r.top)*H/r.height}}
+function sync(){if(sel&&'label'in sel)$('#lbl').value=sel.label||'';if(sel&&sel.c)setCol(sel.c)}
+function legend(){const n={};items.forEach(i=>{if(i.t==='sign')n[i.k]=(n[i.k]||0)+1});$('#leg').innerHTML=Object.entries(n).map(([k,v])=>`<span><b style="background:${K[k][2]}">${K[k][0]}</b>${K[k][1]} × ${v}</span>`).join('')}
+function commit(){draw(cx,true);legend();persist()}
+cv.addEventListener('pointerdown',e=>{cv.setPointerCapture(e.pointerId);const p=pos(e);
+if(tool==='select'){sel=null;for(let i=items.length-1;i>=0;i--)if(hit(items[i],p)){sel=items[i];break}if(sel){push();drag=p}sync()}
+else if(tool==='sign'){push();sel={t:'sign',k:sk,x:snap(p.x),y:snap(p.y),r:0,s:PS[sk]?70:60};items.push(sel)}
+else if(tool==='text'){push();sel={t:'text',x:p.x,y:p.y,label:$('#lbl').value||'Texto',c:col};items.push(sel)}
+else{push();const x=snap(p.x),y=snap(p.y);cur=tool==='room'||tool==='stairs'?{t:tool,x,y,w:0,h:0,label:$('#lbl').value,c:col,f:tool==='room'&&RT[rf]?RT[rf][2]:''}:{t:tool,x1:x,y1:y,x2:x,y2:y,c:col};items.push(cur)}
+commit()});
+cv.addEventListener('pointermove',e=>{const p=pos(e);
+if(drag&&sel){move(sel,p.x-drag.x,p.y-drag.y);drag=p;draw(cx,true)}
+else if(cur){const x=snap(p.x),y=snap(p.y);if(cur.w!==undefined){cur.w=x-cur.x;cur.h=y-cur.y}else{cur.x2=x;cur.y2=y}draw(cx,true)}});
+cv.addEventListener('pointerup',()=>{if(cur){const t=cur;const small=t.w!==undefined?Math.abs(t.w)<20||Math.abs(t.h)<20:Math.hypot(t.x2-t.x1,t.y2-t.y1)<20;
+if(small)items.pop();else{if(t.w!==undefined){if(t.w<0){t.x+=t.w;t.w=-t.w}if(t.h<0){t.y+=t.h;t.h=-t.h}}sel=t}cur=null}
+drag=null;commit()});
+$('#lbl').oninput=()=>{if(sel&&'label'in sel){sel.label=$('#lbl').value;commit()}};
+$('#name').oninput=$('#grade').oninput=$('#ttl').oninput=persist;
+$('#bg').onchange=commit;
+const isS=()=>sel&&sel.t==='sign';
+$('#rot').onclick=()=>{if(isS()){push();sel.r+=Math.PI/4;commit()}};
+$('#big').onclick=()=>{if(isS()){push();sel.s=Math.min(140,sel.s+10);commit()}};
+$('#small').onclick=()=>{if(isS()){push();sel.s=Math.max(30,sel.s-10);commit()}};
+$('#dup').onclick=()=>{if(sel){push();const c=JSON.parse(JSON.stringify(sel));move(c,20,20);items.push(c);sel=c;commit()}};
+$('#top').onclick=()=>{if(sel){push();items=items.filter(i=>i!==sel);items.push(sel);commit()}};
+function del(){if(sel){push();items=items.filter(i=>i!==sel);sel=null;commit()}}
+$('#del').onclick=del;
+document.addEventListener('keydown',e=>{if((e.key==='Delete'||e.key==='Backspace')&&!/INPUT|SELECT/.test(document.activeElement.tagName)){e.preventDefault();del()}});
+$('#und').onclick=()=>{if(undo.length){redo.push(JSON.stringify(items));items=JSON.parse(undo.pop());sel=null;commit()}};
+$('#red').onclick=()=>{if(redo.length){undo.push(JSON.stringify(items));items=JSON.parse(redo.pop());sel=null;commit()}};
+$('#grid').onclick=e=>{grid=!grid;e.target.classList.toggle('on',grid);commit()};
+$('#clr').onclick=()=>{if(items.length&&confirm('¿Borrar todo el croquis?')){push();items=[];sel=null;commit()}};
+$('#cls').onclick=()=>$('#dlg').classList.remove('open');
+$('#exp').onclick=()=>{const n={};items.forEach(i=>{if(i.t==='sign')n[i.k]=1});const ks=Object.keys(n),rows=Math.ceil(ks.length/4),top=84,bot=rows?rows*44+34:10;
+const c=document.createElement('canvas');c.width=W;c.height=top+H+bot;const g=c.getContext('2d');g.fillStyle='#fff';g.fillRect(0,0,W,c.height);
+const grad=g.createLinearGradient(0,0,W,0);grad.addColorStop(0,'#0f6e4a');grad.addColorStop(.6,'#1aa379');grad.addColorStop(1,'#f2b600');g.fillStyle=grad;g.fillRect(0,0,W,top);
+const keep=sel;sel=null;const og=grid;grid=false;draw(cx,false);g.drawImage(cv,0,top);sel=keep;grid=og;draw(cx,true);
+g.fillStyle='#fff';g.textBaseline='alphabetic';g.font='bold 28px Fredoka,sans-serif';g.fillText($('#ttl').value||'Mi croquis de seguridad',18,50);g.font='bold 12px sans-serif';g.fillText('IE N° 0148 MAESTRO VÍCTOR RAÚL HAYA DE LA TORRE',18,20);g.font='15px sans-serif';g.fillText('Estudiante: '+($('#name').value||'________')+'    Grado y sección: '+($('#grade').value||'______'),18,73);
+g.fillStyle='#111';if(ks.length){g.font='bold 15px sans-serif';g.fillText('Leyenda',16,top+H+24)}
+ks.forEach((k,i)=>{const x=16+(i%4)*235,y=top+H+50+Math.floor(i/4)*44;drawSign(g,k,x+18,y,0,34);g.fillStyle='#111';g.font='14px sans-serif';g.textAlign='left';g.fillText(K[k][1],x+44,y+5)});
+$('#out').src=c.toDataURL('image/png');$('#dlg').classList.add('open')};
+let db=null,au=null,D=[];
+const ok=()=>!FB.apiKey.startsWith('PEGA');
+try{if(ok()){firebase.initializeApp(FB);db=firebase.firestore();au=firebase.auth()}}catch(e){console.error(e)}
+const ee=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fd=d=>d.ts&&d.ts.toDate?d.ts.toDate().toLocaleString('es-PE'):'';
+function jpg(){const k=sel,g=grid;sel=null;grid=false;draw(cx,false);const u=cv.toDataURL('image/jpeg',.6);sel=k;grid=g;draw(cx,true);return u}
+$('#snd').onclick=async()=>{const b=$('#snd');
+if(!db){alert('Falta configurar Firebase en el archivo (bloque FB al inicio del script).');return}
+if(!$('#name').value.trim()||!$('#ttl').value.trim()){alert('Escribe tu nombre y el título de tu trabajo antes de enviar.');return}
+if(!items.length){alert('Primero dibuja tu croquis.');return}
+b.disabled=true;b.textContent='Enviando…';
+try{await db.collection('croquis').add({nombre:$('#name').value.trim(),grado:$('#grade').value.trim(),titulo:$('#ttl').value.trim(),items:JSON.stringify(items),bg:$('#bg').value,img:jpg(),nota:null,coment:'',ts:firebase.firestore.FieldValue.serverTimestamp()});
+if(confirm('¡Trabajo enviado! ¿Quieres empezar un croquis nuevo?')){items=[];sel=null;undo=[];redo=[];$('#ttl').value='';$('#name').value='';$('#grade').value='';commit()}}
+catch(e){alert('No se pudo enviar. Revisa tu conexión e inténtalo otra vez.')}
+b.disabled=false;b.textContent='📤 Enviar a mi docente'};
+$('#tbtn').onclick=()=>{$('#tp').classList.add('open');if(!au)$('#lm').textContent='Falta configurar Firebase en el archivo.'};
+$('#tcl').onclick=()=>$('#tp').classList.remove('open');
+$('#li').onclick=()=>{if(!au)return;$('#lm').textContent='Ingresando…';au.signInWithEmailAndPassword($('#em').value.trim(),$('#pw').value).catch(()=>{$('#lm').textContent='No se pudo ingresar: revisa correo y contraseña.'})};
+$('#lo').onclick=()=>au&&au.signOut();
+if(au)au.onAuthStateChanged(u=>{$('#lg').style.display=u?'none':'';$('#ls').style.display=u?'':'none';if(u)load()});
+async function load(){try{const q=await db.collection('croquis').orderBy('ts','desc').limit(300).get();D=q.docs.map(d=>({id:d.id,...d.data()}));show()}catch(e){$('#cnt').textContent='No se pudo leer: '+e.message}}
+function show(){const q=$('#fl').value.toLowerCase(),L=D.filter(d=>((d.grado||'')+' '+d.nombre+' '+d.titulo).toLowerCase().includes(q));$('#cnt').textContent=L.length+' trabajo(s)';
+$('#tg').innerHTML=L.map(d=>`<div class="card" data-id="${ee(d.id)}"><img src="${/^data:image\//.test(d.img)?ee(d.img):''}" alt="Croquis"><b>${ee(d.titulo)}</b><div style="font-size:13px">${ee(d.nombre)} · ${ee(d.grado)}<br><small>${ee(fd(d))}</small></div><div class="row" style="margin:6px 0 0"><input type="number" min="0" max="20" class="nt" value="${d.nota==null?'':ee(d.nota)}" placeholder="Nota 0-20" style="width:110px"><button data-a="sv">💾 Guardar</button></div><input class="cm" value="${ee(d.coment)}" placeholder="Comentario" style="margin-top:6px"><div class="row" style="margin:6px 0 0"><button data-a="ld">✏️ Abrir</button><button data-a="dl">🗑️ Eliminar</button></div></div>`).join('')}
+$('#fl').oninput=show;$('#rf').onclick=load;
+$('#tg').onclick=async e=>{const b=e.target.closest('button'),im=e.target.closest('img'),c=e.target.closest('[data-id]');if(!c)return;const d=D.find(x=>x.id===c.dataset.id);if(!d)return;
+if(im&&im.src){$('#out').src=im.src;$('#dlg').classList.add('open');return}if(!b)return;const a=b.dataset.a;
+try{if(a==='sv'){const n=c.querySelector('.nt').value,cm=c.querySelector('.cm').value;await db.collection('croquis').doc(d.id).update({nota:n===''?null:Number(n),coment:cm});d.nota=n===''?null:Number(n);d.coment=cm;b.textContent='✅ Guardado';setTimeout(()=>b.textContent='💾 Guardar',1500)}
+else if(a==='dl'&&confirm('¿Eliminar este trabajo?')){await db.collection('croquis').doc(d.id).delete();D=D.filter(x=>x!==d);show()}
+else if(a==='ld'){items=JSON.parse(d.items||'[]');$('#name').value=d.nombre||'';$('#grade').value=d.grado||'';$('#ttl').value=d.titulo||'';if(d.bg)$('#bg').value=d.bg;sel=null;undo=[];redo=[];commit();$('#tp').classList.remove('open')}}
+catch(x){alert('No se pudo completar la acción: '+x.message)}};
+$('#csv').onclick=()=>{const cs=v=>{v=String(v==null?'':v);if(/^[=+\-@]/.test(v))v="'"+v;return '"'+v.replace(/"/g,'""')+'"'};
+const r=[['Grado','Estudiante','Título','Nota','Comentario','Fecha'],...D.map(d=>[d.grado,d.nombre,d.titulo,d.nota,d.coment,fd(d)])];
+const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+r.map(x=>x.map(cs).join(',')).join('\n')],{type:'text/csv'}));a.download='notas-croquis.csv';a.click()};
+setTool('select');commit();
+</script>
+</body>
+</html>
