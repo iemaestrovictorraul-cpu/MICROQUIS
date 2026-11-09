@@ -86,7 +86,8 @@ input,select{background:var(--bg);border:1px solid var(--bd);border-radius:10px;
 <input id="lbl" placeholder="Nombre del ambiente o texto" aria-label="Texto" style="flex:1;min-width:150px;width:auto">
 </div>
 <div class="row" id="pal"><b style="font-size:13px">🎨 Color</b><input type="color" id="col" value="#263238" aria-label="Color"><span id="sws" class="row" style="margin:0"></span>
-<span class="sep"></span><label style="font-size:13px">Fondo <select id="bg" style="width:auto"><option value="#ffffff">Blanco</option><option value="#e4f2dc">Pasto</option><option value="#f7f0df">Crema</option><option value="#dcecf7">Celeste</option></select></label></div>
+<span class="sep"></span><label style="font-size:13px">Hoja <select id="ori" style="width:auto"><option value="h">Horizontal</option><option value="v">Vertical</option></select></label>
+<label style="font-size:13px">Fondo <select id="bg" style="width:auto"><option value="#ffffff">Blanco</option><option value="#e4f2dc">Pasto</option><option value="#f7f0df">Crema</option><option value="#dcecf7">Celeste</option></select></label></div>
 <canvas id="cv"></canvas>
 <div class="row" style="margin:10px 0 0">
 <button id="rot">🔄 Girar</button><button id="big">➕ Grande</button><button id="small">➖ Pequeño</button>
@@ -128,12 +129,12 @@ const MC={Sismo:'#e65100',Tsunami:'#1565c0',Huaico:'#795548',Incendio:'#d32f2f',
 const MS=[['Sismo','Durante un sismo: agáchate, cúbrete y sujétate. Mantén la calma.'],['Sismo','No corras ni empujes: evacúa por la ruta señalizada.'],['Sismo','Aléjate de ventanas, vidrios y objetos que puedan caer.'],['Tsunami','Si el sismo es fuerte y largo, sube a una zona alta sin esperar la alarma.'],['Huaico','Con lluvias intensas, aléjate de quebradas y ríos.'],['Incendio','Cúbrete nariz y boca, avanza agachado y no uses ascensores.'],['General','Ten lista tu mochila de emergencia y conoce tu punto de reunión.'],['General','Escucha a tu docente, mantén el orden y ayuda a quien lo necesite.'],['Sismo','Después del sismo, ve al punto de reunión y espera las indicaciones.'],['Sismo','Si estás en el patio, aléjate de paredes, postes y cables.'],['Tsunami','Cerca de la costa, conoce tu ruta hacia la zona alta.'],['Huaico','No cruces ríos, canales ni zonas inundadas.'],['Incendio','Si hay humo, avanza agachado y sal por la ruta más cercana.'],['Friaje','Abrígate bien y evita salir en las horas de más frío.'],['Inundación','No camines por zonas inundadas: pueden tener cables y huecos.'],['Emergencia','Bomberos 116, Policía 105 y SAMU 106: memoriza estos números.'],['General','Mantén libres las puertas, pasadizos y escaleras.'],['General','Practica los simulacros y ayuda a tus compañeros.']];
 const DEF={wall:'#263238',room:'#546e7a',arrow:'#1b8a3a',text:'#111111',stairs:'#6d4c41'};
 const SW=['#263238','#d32f2f','#e65100','#f2b600','#1b8a3a','#1565c0','#8e24aa','#6d4c41'];
-const $=s=>document.querySelector(s),cv=$('#cv'),W=960,H=600,cx=cv.getContext('2d'),KEY='croquis_v1';
+const $=s=>document.querySelector(s),cv=$('#cv'),cx=cv.getContext('2d'),KEY='croquis_v1';let W=960,H=596;
 cv.width=W;cv.height=H;
 let items=[],tool='select',sk=null,sel=null,drag=null,cur=null,undo=[],redo=[],col='#263238',grid=true,rf='';
 const snap=v=>Math.round(v/20)*20,push=()=>{undo.push(JSON.stringify(items));if(undo.length>60)undo.shift();redo=[]};
-function persist(){try{localStorage.setItem(KEY,JSON.stringify({items,n:$('#name').value,g:$('#grade').value,t:$('#ttl').value,bg:$('#bg').value}))}catch(e){}}
-try{const d=JSON.parse(localStorage.getItem(KEY)||'null');if(d){items=d.items||[];$('#name').value=d.n||'';$('#grade').value=d.g||'';$('#ttl').value=d.t||'';if(d.bg)$('#bg').value=d.bg}}catch(e){}
+function persist(){try{localStorage.setItem(KEY,JSON.stringify({items,n:$('#name').value,g:$('#grade').value,t:$('#ttl').value,bg:$('#bg').value,o:$('#ori').value}))}catch(e){}}
+try{const d=JSON.parse(localStorage.getItem(KEY)||'null');if(d){items=d.items||[];$('#name').value=d.n||'';$('#grade').value=d.g||'';$('#ttl').value=d.t||'';if(d.bg)$('#bg').value=d.bg;if(d.o){$('#ori').value=d.o;setOri(d.o)}}}catch(e){}
 const sb=(o,g)=>Object.entries(o).map(([k,v])=>`<button class="sg" data-sign="${k}"><i ${g?`class="p" style="border-color:${v[2]}"`:`style="background:${v[2]}"`}>${v[0]}</i>${v[1]}</button>`).join('');
 $('#signs').innerHTML=sb(SG);$('#house').innerHTML=sb(HS);$('#school').innerHTML=sb(CS);$('#pers').innerHTML=Object.entries(PS).map(([k,v])=>`<button class="sg" data-sign="${k}"><img src="${pImg(k)}" alt="" width="36" height="50">${v[1]}</button>`).join('');
 $('#sws').innerHTML=SW.map(c=>`<button class="sw" data-c="${c}" style="background:${c}" aria-label="Color ${c}"></button>`).join('');
@@ -203,6 +204,8 @@ drag=null;commit()});
 $('#lbl').oninput=()=>{if(sel&&'label'in sel){sel.label=$('#lbl').value;commit()}};
 $('#name').oninput=$('#grade').oninput=$('#ttl').oninput=persist;
 $('#bg').onchange=commit;
+function setOri(o){W=o==='v'?680:960;H=o==='v'?876:596;cv.width=W;cv.height=H;cv.style.maxWidth=o==='v'?'620px':'';cv.style.margin=o==='v'?'0 auto':''}
+$('#ori').onchange=e=>{if(items.length&&!confirm('Al cambiar la orientación, algunos dibujos pueden quedar fuera de la hoja. ¿Continuar?')){e.target.value=W>H?'h':'v';return}setOri(e.target.value);commit()};
 const isS=()=>sel&&sel.t==='sign';
 $('#rot').onclick=()=>{if(isS()){push();sel.r+=Math.PI/4;commit()}};
 $('#big').onclick=()=>{if(isS()){push();sel.s=Math.min(140,sel.s+10);commit()}};
@@ -217,13 +220,13 @@ $('#red').onclick=()=>{if(redo.length){undo.push(JSON.stringify(items));items=JS
 $('#grid').onclick=e=>{grid=!grid;e.target.classList.toggle('on',grid);commit()};
 $('#clr').onclick=()=>{if(items.length&&confirm('¿Borrar todo el croquis?')){push();items=[];sel=null;commit()}};
 $('#cls').onclick=()=>$('#dlg').classList.remove('open');
-function full(){const n={};items.forEach(i=>{if(i.t==='sign')n[i.k]=1});const ks=Object.keys(n),rows=Math.ceil(ks.length/4),top=84,bot=rows?rows*44+34:10;
-const c=document.createElement('canvas');c.width=W;c.height=top+H+bot;const g=c.getContext('2d');g.fillStyle='#fff';g.fillRect(0,0,W,c.height);
-const grad=g.createLinearGradient(0,0,W,0);grad.addColorStop(0,'#0f6e4a');grad.addColorStop(.6,'#1aa379');grad.addColorStop(1,'#f2b600');g.fillStyle=grad;g.fillRect(0,0,W,top);
-const keep=sel;sel=null;const og=grid;grid=false;draw(cx,false);g.drawImage(cv,0,top);sel=keep;grid=og;draw(cx,true);
-g.fillStyle='#fff';g.textBaseline='alphabetic';g.font='bold 28px Fredoka,sans-serif';g.fillText($('#ttl').value||'Mi croquis de seguridad',18,50);g.font='bold 12px sans-serif';g.fillText('IE N° 0148 MAESTRO VÍCTOR RAÚL HAYA DE LA TORRE',18,20);g.font='15px sans-serif';g.fillText('Estudiante: '+($('#name').value||'________')+'    Grado y sección: '+($('#grade').value||'______'),18,73);
-g.fillStyle='#111';if(ks.length){g.font='bold 15px sans-serif';g.fillText('Leyenda',16,top+H+24)}
-ks.forEach((k,i)=>{const x=16+(i%4)*235,y=top+H+50+Math.floor(i/4)*44;drawSign(g,k,x+18,y,0,34);g.fillStyle='#111';g.font='14px sans-serif';g.textAlign='left';g.fillText(K[k][1],x+44,y+5)});
+function full(){const top=84,c=document.createElement('canvas');c.width=W;c.height=top+H;const g=c.getContext('2d');g.fillStyle='#fff';g.fillRect(0,0,W,c.height);
+const gr=g.createLinearGradient(0,0,W,0);gr.addColorStop(0,'#0f6e4a');gr.addColorStop(.6,'#1aa379');gr.addColorStop(1,'#f2b600');g.fillStyle=gr;g.fillRect(0,0,W,top);
+const keep=sel,og=grid;sel=null;grid=false;draw(cx,false);g.drawImage(cv,0,top);sel=keep;grid=og;draw(cx,true);
+g.strokeStyle='#999';g.lineWidth=1;g.strokeRect(.5,top+.5,W-1,H-1);
+g.fillStyle='#fff';g.textAlign='center';g.textBaseline='alphabetic';
+const ln=(t,f,y)=>{let z=f;do{g.font='bold '+z+'px Fredoka,sans-serif';z--}while(g.measureText(t).width>W-32&&z>9);g.fillText(t,W/2,y)};
+ln('IE N° 0148 MAESTRO VÍCTOR RAÚL HAYA DE LA TORRE',13,20);ln($('#ttl').value||'Mi croquis de seguridad',28,52);ln('Estudiante: '+($('#name').value||'________')+'    Sección: '+($('#grade').value||'______'),15,74);
 return c}
 $('#exp').onclick=()=>{$('#out').src=full().toDataURL('image/png');$('#dlg').classList.add('open')};
 let db=null,au=null,D=[];
@@ -250,13 +253,15 @@ async function load(){try{const q=await db.collection('croquis').orderBy('ts','d
 function show(){const q=$('#fl').value.toLowerCase(),sf=$('#sf').value,L=D.filter(d=>(!sf||(d.grado||'Sin sección')===sf)&&((d.nombre||'')+' '+(d.titulo||'')).toLowerCase().includes(q));$('#cnt').textContent=L.length+' trabajo(s)';
 const n={};L.forEach(d=>{const k=d.grado||'Sin sección';n[k]=(n[k]||0)+1});let g=null;
 $('#tg').innerHTML=L.map(d=>{const k=d.grado||'Sin sección';let h='';if(k!==g){g=k;h=`<h2 style="grid-column:1/-1;margin:12px 0 0;padding-bottom:4px;border-bottom:2px solid var(--ac)">📚 ${ee(k)} <small style="font-weight:400;color:var(--mut)">· ${n[k]} trabajo(s)</small></h2>`}
-return h+`<div class="card" data-id="${ee(d.id)}"><img src="${/^data:image\//.test(d.img)?ee(d.img):''}" alt="Croquis"><b>${ee(d.titulo)}</b><div style="font-size:13px">${ee(d.nombre)} · ${ee(d.grado)}<br><small>${ee(fd(d))}</small></div><div class="row" style="margin:6px 0 0"><input type="number" min="0" max="20" class="nt" value="${d.nota==null?'':ee(d.nota)}" placeholder="Nota 0-20" style="width:110px"><button data-a="sv">💾 Guardar</button></div><input class="cm" value="${ee(d.coment)}" placeholder="Comentario" style="margin-top:6px"><div class="row" style="margin:6px 0 0"><button data-a="dw">📥 Descargar</button><button data-a="dl">🗑️ Eliminar</button></div></div>`}).join('')}
+return h+`<div class="card" data-id="${ee(d.id)}"><img src="${/^data:image\//.test(d.img)?ee(d.img):''}" alt="Croquis"><b>${ee(d.titulo)}</b><div style="font-size:13px">${ee(d.nombre)} · ${ee(d.grado)}<br><small>${ee(fd(d))}</small></div><div class="row" style="margin:6px 0 0"><input type="number" min="0" max="20" class="nt" value="${d.nota==null?'':ee(d.nota)}" placeholder="Nota 0-20" style="width:110px"><button data-a="sv">💾 Guardar</button></div><input class="cm" value="${ee(d.coment)}" placeholder="Comentario" style="margin-top:6px"><div class="row" style="margin:6px 0 0"><button data-a="dw">📥 Descargar</button><button data-a="pr">🖨️ Imprimir</button><button data-a="dl">🗑️ Eliminar</button></div></div>`}).join('')}
 $('#fl').oninput=show;$('#sf').onchange=show;$('#rf').onclick=load;
 $('#tg').onclick=async e=>{const b=e.target.closest('button'),im=e.target.closest('img'),c=e.target.closest('[data-id]');if(!c)return;const d=D.find(x=>x.id===c.dataset.id);if(!d)return;
 if(im&&im.src){$('#out').src=im.src;$('#dlg').classList.add('open');return}if(!b)return;const a=b.dataset.a;
 try{if(a==='sv'){const n=c.querySelector('.nt').value,cm=c.querySelector('.cm').value;await db.collection('croquis').doc(d.id).update({nota:n===''?null:Number(n),coment:cm});d.nota=n===''?null:Number(n);d.coment=cm;b.textContent='✅ Guardado';setTimeout(()=>b.textContent='💾 Guardar',1500)}
 else if(a==='dl'&&confirm('¿Eliminar este trabajo?')){await db.collection('croquis').doc(d.id).delete();D=D.filter(x=>x!==d);show()}
-else if(a==='dw'&&/^data:image\//.test(d.img)){const z=document.createElement('a');z.href=d.img;z.download=((d.grado||'')+' - '+(d.nombre||'')+' - '+(d.titulo||'croquis')).replace(/[\\\/:*?\"<>|]+/g,'')+'.jpg';z.click()}}
+else if(a==='dw'&&/^data:image\//.test(d.img)){const z=document.createElement('a');z.href=d.img;z.download=((d.grado||'')+' - '+(d.nombre||'')+' - '+(d.titulo||'croquis')).replace(/[\\\/:*?\"<>|]+/g,'')+'.jpg';z.click()}
+else if(a==='pr'){const im=c.querySelector('img');if(!im||!im.src)return;const L=im.naturalWidth>im.naturalHeight,w=window.open('','_blank');if(!w){alert('Permite las ventanas emergentes para imprimir.');return}
+w.document.write('<!doctype html><title>Imprimir croquis</title><style>@page{size:A4 '+(L?'landscape':'portrait')+';margin:8mm}html,body{margin:0}img{display:block;margin:0 auto;max-width:100%;max-height:'+(L?'192mm':'279mm')+'}</style><img src="'+im.src+'">');w.document.close();setTimeout(()=>{w.focus();w.print()},500)}}
 catch(x){alert('No se pudo completar la acción: '+x.message)}};
 $('#csv').onclick=()=>{const cs=v=>{v=String(v==null?'':v);if(/^[=+\-@]/.test(v))v="'"+v;return '"'+v.replace(/"/g,'""')+'"'};
 const r=[['Grado','Estudiante','Título','Nota','Comentario','Fecha'],...D.map(d=>[d.grado,d.nombre,d.titulo,d.nota,d.coment,fd(d)])];
